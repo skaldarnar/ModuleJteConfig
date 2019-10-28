@@ -2,7 +2,7 @@ node ("default-java") {
 
     stage('Checkout') {
         echo "Going to check out the things !"
-        git url: "https://github.com/Terasology/Sample.git", credentialsId: "GooeyHub"
+        checkout scm
     }
 
     stage('Prep workspace') {

@@ -1,5 +1,3 @@
-build()
-
 pipeline {
     agent {
         label "default-java"

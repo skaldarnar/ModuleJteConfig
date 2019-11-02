@@ -16,6 +16,7 @@ node ("default-java") {
             rm -f gradle.properties
             echo "rootProject.name = '$realProjectName'" >> settings.gradle
             cat settings.gradle
+            chmod +x gradlew
         """
     }
     stage('Build') {

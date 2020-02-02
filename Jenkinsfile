@@ -27,7 +27,7 @@ node ("default-java") {
     
     stage('Publish') {
         withCredentials([usernamePassword(credentialsId: 'artifactory-gooey', usernameVariable: 'artifactoryUser', passwordVariable: 'artifactoryPass')]) {
-            sh './gradlew publish -PmavenUser=${artifactoryUser} -PmavenPass=${artifactoryPass}'
+            sh './gradlew --debug publish -PmavenUser=${artifactoryUser} -PmavenPass=${artifactoryPass}'
         }
     }
 }

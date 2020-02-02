@@ -24,6 +24,12 @@ node ("default-java") {
         sh './gradlew clean jar'
         archiveArtifacts 'gradlew, gradle/wrapper/*, modules/Core/build.gradle, config/**, build/distributions/Terasology.zip, build/resources/main/org/terasology/version/versionInfo.properties, natives/**'
     }
+    
+    stage('Publish') {
+        withCredentials([usernamePassword(credentialsId: 'artifactory-gooey', usernameVariable: 'artifactoryUser', passwordVariable: 'artifactoryPass')]) {
+            sh './gradlew publish -PmavenUser=${artifactoryUser} -PmavenPass=${artifactoryPass}'
+        }
+    }
 }
 
 def String findRealProjectName() {

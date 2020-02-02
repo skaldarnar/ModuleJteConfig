@@ -21,7 +21,7 @@ node ("default-java") {
     }
     
     stage('Build') {
-        sh './gradlew clean build'
+        sh './gradlew clean jar'
         archiveArtifacts 'gradlew, gradle/wrapper/*, modules/Core/build.gradle, config/**, build/distributions/Terasology.zip, build/resources/main/org/terasology/version/versionInfo.properties, natives/**'
     }
 }

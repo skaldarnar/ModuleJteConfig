@@ -6,8 +6,8 @@ node ("default-java") {
     }
 
     stage('Prep workspace') {
-        copyArtifacts(projectName: "Terasology/TerasologySonar", filter: "modules/Core/build.gradle", flatten: true, selector: lastSuccessful())
-        copyArtifacts(projectName: "Terasology/TerasologySonar", filter: "*, gradle/wrapper/**, config/**, natives/**", selector: lastSuccessful())
+        copyArtifacts(projectName: "Terasology/engine/develop", filter: "modules/Core/build.gradle", flatten: true, selector: lastSuccessful())
+        copyArtifacts(projectName: "Terasology/engine/develop", filter: "*, gradle/wrapper/**, config/**, natives/**", selector: lastSuccessful())
         def realProjectName = findRealProjectName()
         echo "Real project name: $realProjectName"
         sh """
@@ -19,32 +19,16 @@ node ("default-java") {
             chmod +x gradlew
         """
     }
+    
     stage('Build') {
-        rtGradleResolver (
-            id: 'teraResolver',
-            serverId: 'TerasologyArtifactory',
-            repo: 'virtual-repo-live'
-        )
-          
-        rtGradleDeployer (
-            id: 'teraDeployer',
-            serverId: 'TerasologyArtifactory',
-            repo: 'terasology-snapshot-local',
-        )
-
-        rtGradleRun (
-            // Set to true if the Artifactory Plugin is already defined in build script.
-            usesPlugin: true,
-            // Set to true if you'd like the build to use the Gradle Wrapper.
-            useWrapper: true,
-            tasks: 'clean check jar generatePomFileForMavenJavaPublication artifactoryPublish',
-            resolverId: 'teraResolver',
-            deployerId: 'teraDeployer',
-        )
-
-        rtPublishBuildInfo (
-            serverId: 'TerasologyArtifactory'
-        )
+        sh './gradlew clean jar'
+        archiveArtifacts 'gradlew, gradle/wrapper/*, modules/Core/build.gradle, config/**, build/distributions/Terasology.zip, build/resources/main/org/terasology/version/versionInfo.properties, natives/**'
+    }
+    
+    stage('Publish') {
+        withCredentials([usernamePassword(credentialsId: 'artifactory-gooey', usernameVariable: 'artifactoryUser', passwordVariable: 'artifactoryPass')]) {
+            sh './gradlew -Dorg.gradle.internal.publish.checksums.insecure=true publish -PmavenUser=${artifactoryUser} -PmavenPass=${artifactoryPass}'
+        }
     }
 }
 

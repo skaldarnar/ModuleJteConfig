@@ -6,8 +6,8 @@ node ("default-java") {
     }
 
     stage('Prep workspace') {
-        copyArtifacts(projectName: "Nanoware/Terasology/PR-89", filter: "modules/Core/build.gradle", flatten: true, selector: lastSuccessful())
-        copyArtifacts(projectName: "Nanoware/Terasology/PR-89", filter: "*, gradle/wrapper/**, config/**, natives/**", selector: lastSuccessful())
+        copyArtifacts(projectName: "Nanoware/Terasology/develop", filter: "modules/Core/build.gradle", flatten: true, selector: lastSuccessful())
+        copyArtifacts(projectName: "Nanoware/Terasology/develop", filter: "*, gradle/wrapper/**, config/**, natives/**", selector: lastSuccessful())
         def realProjectName = findRealProjectName()
         echo "Real project name: $realProjectName"
         sh """

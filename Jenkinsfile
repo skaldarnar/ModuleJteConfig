@@ -25,10 +25,20 @@ node ("default-java") {
         archiveArtifacts 'gradlew, gradle/wrapper/*, modules/Core/build.gradle, config/**, build/distributions/Terasology.zip, build/resources/main/org/terasology/version/versionInfo.properties, natives/**'
     }
     
+    stage('Analytics') {
+        sh './gradlew check'
+    }
+    
     stage('Publish') {
         withCredentials([usernamePassword(credentialsId: 'artifactory-gooey', usernameVariable: 'artifactoryUser', passwordVariable: 'artifactoryPass')]) {
             sh './gradlew -Dorg.gradle.internal.publish.checksums.insecure=true publish -PmavenUser=${artifactoryUser} -PmavenPass=${artifactoryPass}'
         }
+    }
+    
+    stage('Record') {
+        junit testResults: 'build/test-results/test/*.xml'
+        recordIssues aggregatingResults: true, tool: checkStyle(pattern: 'build/reports/checkstyle/*.xml')
+        recordIssues aggregatingResults: true, tool: [javaDoc()]
     }
 }
 

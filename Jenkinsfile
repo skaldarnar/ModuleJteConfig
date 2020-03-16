@@ -26,7 +26,7 @@ node ("default-java") {
     }
     
     stage('Analytics') {
-        sh './gradlew check'
+        sh './gradlew --stacktrace check'
     }
     
     stage('Publish') {

@@ -38,7 +38,7 @@ node ("default-java") {
     stage('Record') {
         junit testResults: 'build/test-results/test/*.xml'
         recordIssues aggregatingResults: true, tool: checkStyle(pattern: 'build/reports/checkstyle/*.xml')
-        recordIssues aggregatingResults: true, tool: [javaDoc()]
+        recordIssues aggregatingResults: true, tool: javaDoc()
     }
 }
 

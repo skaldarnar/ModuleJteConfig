@@ -26,7 +26,7 @@ node ("default-java") {
     }
     
     stage('Analytics') {
-        sh './gradlew --stacktrace check'
+        sh './gradlew check'
     }
     
     stage('Publish') {
@@ -37,8 +37,12 @@ node ("default-java") {
     
     stage('Record') {
         junit testResults: 'build/test-results/test/*.xml'
-        recordIssues aggregatingResults: true, tool: checkStyle(pattern: 'build/reports/checkstyle/*.xml')
-        recordIssues aggregatingResults: true, tool: javaDoc()
+        recordIssues tool: javaDoc()
+        step([$class: 'JavadocArchiver', javadocDir: 'build/docs/javadoc', keepAll: false])
+        recordIssues tool: checkStyle(pattern: 'build/reports/checkstyle/*.xml')
+        recordIssues tool: spotBugs(pattern: '**/build/reports/spotbugs/*.xml', useRankAsPriority: true)
+        recordIssues tool: pmdParser(pattern: '**/reports/pmd/*.xml')
+        recordIssues tool: taskScanner(includePattern: '**/*.java,**/*.groovy,**/*.gradle', lowTags: 'WIBNIF', normalTags: 'TODO', highTags: 'ASAP')
     }
 }
 

@@ -1,15 +1,15 @@
 node ("default-java") {
 
-    stage('Checkout') {
+    stage('Prepare') {
         echo "Going to check out the things !"
         checkout scm
-    }
 
-    stage('Prep workspace') {
+        echo "Copying in the build harness from an engine job"
         copyArtifacts(projectName: "Nanoware/Terasology/develop", filter: "modules/Core/build.gradle", flatten: true, selector: lastSuccessful())
         copyArtifacts(projectName: "Nanoware/Terasology/develop", filter: "*, gradle/wrapper/**, config/**, natives/**", selector: lastSuccessful())
+
         def realProjectName = findRealProjectName()
-        echo "Real project name: $realProjectName"
+        echo "Setting real project name to: $realProjectName"
         sh """
             ls
             rm -f settings.gradle

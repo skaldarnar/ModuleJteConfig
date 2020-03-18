@@ -36,17 +36,17 @@ node ("default-java") {
     }
     
     stage('Record') {
-        junit testResults: 'build/test-results/test/*.xml'
+        junit testResults: 'build/test-results/test/*.xml',  allowEmptyResults: true
         recordIssues tool: javaDoc()
         step([$class: 'JavadocArchiver', javadocDir: 'build/docs/javadoc', keepAll: false])
-        recordIssues tool: checkStyle(pattern: 'build/reports/checkstyle/*.xml')
+        recordIssues tool: checkStyle(pattern: '**/build/reports/checkstyle/*.xml')
         recordIssues tool: spotBugs(pattern: '**/build/reports/spotbugs/*.xml', useRankAsPriority: true)
-        recordIssues tool: pmdParser(pattern: '**/reports/pmd/*.xml')
+        recordIssues tool: pmdParser(pattern: '**/build/reports/pmd/*.xml')
         recordIssues tool: taskScanner(includePattern: '**/*.java,**/*.groovy,**/*.gradle', lowTags: 'WIBNIF', normalTags: 'TODO', highTags: 'ASAP')
     }
 }
 
-def String findRealProjectName() {
+String findRealProjectName() {
     def jobNameParts = env.JOB_NAME.tokenize('/') as String[]
     println "Job name parts: $jobNameParts"
     return jobNameParts.length < 2 ? env.JOB_NAME : jobNameParts[jobNameParts.length - 2]

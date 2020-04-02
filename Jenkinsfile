@@ -40,9 +40,12 @@ node ("default-java") {
     }
     
     stage('Record') {
+        // Test for the presence of Javadoc so we can skip it if there is none (otherwise would fail the build)
+        if (fileExists("build/docs/javadoc/index.html")) {
+            step([$class: 'JavadocArchiver', javadocDir: 'build/docs/javadoc', keepAll: false])
+            recordIssues tool: javaDoc()
+        }
         junit testResults: 'build/test-results/test/*.xml',  allowEmptyResults: true
-        recordIssues tool: javaDoc()
-        step([$class: 'JavadocArchiver', javadocDir: 'build/docs/javadoc', keepAll: false])
         recordIssues tool: checkStyle(pattern: '**/build/reports/checkstyle/*.xml')
         recordIssues tool: spotBugs(pattern: '**/build/reports/spotbugs/*.xml', useRankAsPriority: true)
         recordIssues tool: pmdParser(pattern: '**/build/reports/pmd/*.xml')

@@ -5,7 +5,7 @@ node ("default-java") {
         checkout scm
 
         echo "Copying in the build harness from an engine job"
-        copyArtifacts(projectName: "Terasology/engine/develop", filter: "modules/Core/build.gradle", flatten: true, selector: lastSuccessful())
+        copyArtifacts(projectName: "Terasology/engine/develop", filter: "templates/build.gradle", flatten: true, selector: lastSuccessful())
         copyArtifacts(projectName: "Terasology/engine/develop", filter: "*, gradle/wrapper/**, config/**, natives/**", selector: lastSuccessful())
 
         def realProjectName = findRealProjectName()
@@ -22,7 +22,7 @@ node ("default-java") {
     
     stage('Build') {
         sh './gradlew clean jar'
-        archiveArtifacts 'gradlew, gradle/wrapper/*, modules/Core/build.gradle, config/**, build/distributions/Terasology.zip, build/resources/main/org/terasology/version/versionInfo.properties, natives/**'
+        archiveArtifacts 'gradlew, gradle/wrapper/*, templates/build.gradle, config/**, build/distributions/Terasology.zip, build/resources/main/org/terasology/version/versionInfo.properties, natives/**'
     }
     
     stage('Publish') {

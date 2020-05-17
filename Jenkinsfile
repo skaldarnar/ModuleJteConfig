@@ -5,8 +5,8 @@ node ("default-java") {
         checkout scm
 
         echo "Copying in the build harness from an engine job"
-        copyArtifacts(projectName: "Terasology/engine/develop", filter: "templates/build.gradle", flatten: true, selector: lastSuccessful())
-        copyArtifacts(projectName: "Terasology/engine/develop", filter: "*, gradle/wrapper/**, config/**, natives/**", selector: lastSuccessful())
+        copyArtifacts(projectName: "Terasology/engine/develop", filter: "templates/build.gradle", flatten: true, selector: lastCompleted())
+        copyArtifacts(projectName: "Terasology/engine/develop", filter: "*, gradle/wrapper/**, config/**, natives/**", selector: lastCompleted())
 
         def realProjectName = findRealProjectName()
         echo "Setting real project name to: $realProjectName"
